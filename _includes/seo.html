@@ -12,7 +12,12 @@
 {%- assign page_title = page_title | markdownify | strip_html | strip_newlines | escape_once -%}
 {%- assign seo_title  = seo_title  | markdownify | strip_html | strip_newlines | escape_once -%}
 
-{%- assign canonical_url = page.canonical_url | default: page.url | replace: "/index.html", "/" | absolute_url %}
+{%- assign canonical_path = page.url | replace: "/index.html", "/" -%}
+{%- if site.url == "https://temp.objectivelaw.org" -%}
+  {%- assign canonical_url = canonical_path | prepend: "https://objectivelaw.org" -%}
+{%- else -%}
+  {%- assign canonical_url = page.canonical_url | default: canonical_path | absolute_url -%}
+{%- endif -%}
 
 {%- assign seo_description = page.description | default: page.excerpt | default: site.description -%}
 {%- if seo_description -%}
@@ -108,6 +113,9 @@
 
 <title>{{ seo_title }}{% if paginator %}{% unless paginator.page == 1 %} {{ title_separator }} {{ site.data.ui-text[locale].page | default: "Page" }} {{ paginator.page }}{% endunless %}{% endif %}</title>
 <meta name="description" content="{{ seo_description }}">
+{% if site.url == "https://temp.objectivelaw.org" %}
+<meta name="robots" content="noindex, follow">
+{% endif %}
 
 {% if author.name %}
   <meta name="author" content="{{ author.name | default: author | escape_once | strip }}">
